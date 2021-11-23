@@ -26,11 +26,19 @@ export default class ModalSynthetics extends React.PureComponent {
       selectedOption: 'REQUEST'
     };
     this.onValueChange = this.onValueChange.bind(this);
+    if (this.props.infoAditional.steps) {
+      this.setState({
+        dataSteps: this.props.infoAditional.steps
+      });
+      this.state.dataSteps = this.props.infoAditional.steps;
+    }
   }
 
   componentDidMount() {
     const timeRanges = [];
     const { infoAditional = {} } = this.props;
+    console.log("infoAditional");
+    console.log(infoAditional);
     if (infoAditional.variables) {
       this.setState({
         dataVariables: infoAditional.variables
@@ -42,9 +50,11 @@ export default class ModalSynthetics extends React.PureComponent {
       });
     }
     if (infoAditional.steps) {
+      console.log("setting state")
       this.setState({
         dataSteps: infoAditional.steps
       });
+      //this.state.dataSteps = infoAditional.steps;
     }
     if (
       infoAditional.host !== '-----' ||
@@ -66,6 +76,7 @@ export default class ModalSynthetics extends React.PureComponent {
   }
 
   setSortColumnSteps = column => {
+    console.log("inside set sort column steps");
     const { sortColumn, dataSteps } = this.state;
     let order = '';
     if (sortColumn.column === column) {
@@ -96,6 +107,8 @@ export default class ModalSynthetics extends React.PureComponent {
 
   loadDataSteps = (test, sortColumn) => {
     let finalList = test;
+    console.log("finalList");
+    console.log(finalList);
     finalList = this.sortDataSteps(finalList, sortColumn);
     this.setState({ dataSteps: finalList });
   };
@@ -985,7 +998,10 @@ export default class ModalSynthetics extends React.PureComponent {
       sortColumn,
       dataSteps
     } = this.state;
+    //console.log("inside render steps");
+    //console.log(this.state);
     if (dataSteps.length >= 1) {
+      console.log("rendering data steps");
       return (
         <div style={{ height: '500px' }}>
           <ReactTable
@@ -1081,18 +1097,36 @@ export default class ModalSynthetics extends React.PureComponent {
                 accessor: 'params',
                 sortable: false,
                 Cell: props => {
+                  console.log("inside parameters");
+                  console.log(props);
+                  if (props.value.element){
                   return (
-                    <div
-                      className="h100 flex flexCenterVertical"
-                      style={{
-                        background: props.index % 2 ? '#F7F7F8' : 'white'
-                      }}
-                    >
-                      <span
-                        style={{ marginLeft: '15px' }}
-                      >{`${props.value}`}</span>
-                    </div>
-                  );
+                      <div
+                        className="h100 flex flexCenterVertical"
+                        style={{
+                          background: props.index % 2 ? '#F7F7F8' : 'white'
+                        }}
+                      >
+                        <span
+                          style={{ marginLeft: '15px' }}
+                        >{`${props.value.element.url}`}</span>
+                      </div>
+                    );
+                  }
+                  else if ((props.value.check) && (props.value.value)){
+                    return (
+                      <div
+                        className="h100 flex flexCenterVertical"
+                        style={{
+                          background: props.index % 2 ? '#F7F7F8' : 'white'
+                        }}
+                      >
+                        <span
+                          style={{ marginLeft: '15px' }}
+                        >{`${props.value.check} ${props.value.value}`}</span>
+                      </div>
+                    );
+                  }
                 }
               },
               {
@@ -1147,6 +1181,7 @@ export default class ModalSynthetics extends React.PureComponent {
         </div>
       );
     } else {
+      console.log("inside the else statement");
       return <div style={{ height: '500px' }} />;
     }
   }

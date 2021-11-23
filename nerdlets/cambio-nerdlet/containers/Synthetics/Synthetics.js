@@ -39,6 +39,8 @@ export default class Synthetics extends React.PureComponent {
 
   componentDidMount() {
     const { testList = [] } = this.props;
+    console.log(testList);
+    console.log("Looping in testList");
     const data = [];
     testList.forEach(element => {
       let loca = '';
@@ -94,17 +96,20 @@ export default class Synthetics extends React.PureComponent {
         });
       }
       const steps = [];
-      if (element.config.steps) {
-        element.config.steps.forEach(elementsteps => {
+      if (element.steps) {
+        element.steps.forEach(elementsteps => {
+          console.log(elementsteps.name);
           let params = '';
           if (elementsteps.request) {
             params = `${
               elementsteps.request.method ? elementsteps.request.method : ''
             } ${elementsteps.request.url ? elementsteps.request.url : ''}`;
           }
+          params = elementsteps.params;
+
           steps.push({
             params: params !== '' ? params : '-----',
-            type: elementsteps.subtype ? elementsteps.subtype : '-----'
+            type: elementsteps.type ? elementsteps.type : '-----'
           });
         });
       }

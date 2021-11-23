@@ -49,6 +49,7 @@ const callApis = async (
         // if obj is different of null
         if (obj) {
           switch (list[i].name) {
+            /*
             case 'Get All Active Metrics':
               {
                 const date = new Date();
@@ -72,9 +73,40 @@ const callApis = async (
               break;
             case 'Get all Pipelines':
               await callbackDataWritter(list[i].name, obj);
-              break;
-            case 'Get all tests':
+              break;*/
+            case 'Get all tests': 
+              let steps = null;
+              // checking if synthetics checks have been returned.  If so then 
+              // loop through each synthetics test and retrieve all of the the test
+              // details from datadog
               for (const test of obj.data.tests) {
+                // setting up the rest api configuration option
+                //console.log("iterating through tests to retrieve the test details from dd.")
+                const testOptions = {
+                  baseURL: `${configuration.proxy + list[i].proto}://${list[i].host.replace(
+                    '{{datadog_site}}',
+                    config.API_SITE
+                  )}`,
+                  url: '/api/v1/synthetics/tests/browser/' + test["public_id"],
+                  headers: _setHttpHeaders(list[i].headers),
+                  method: 'get'
+                };
+
+                // making the api request
+                steps = await axios(testOptions).catch(async error => {
+                  console.log("error found");
+                  console.log(error);
+                  throw error;
+                });
+
+                //console.log(steps);
+                if (steps.data != null) {
+                  if (steps.data.steps != null) {
+                    // A step has been returned and adding it to the test object
+                    test.steps = steps.data.steps;
+                  }
+                } 
+
                 if (test.config.variables) {
                   for (const variable of test.config.variables) {
                     if (variable.id) {
@@ -91,8 +123,9 @@ const callApis = async (
                   }
                 }
               }
+
               await callbackDataWritter(list[i].name, obj.data);
-              break;
+              break;/*
             case 'Get Dashboards Manual':
               for (let j = 0; j < obj.data.dashboard_lists.length; j++) {
                 const response = await getManualDashboard(
@@ -264,7 +297,7 @@ const callApis = async (
               break;
             default:
               await callbackDataWritter(list[i].name, obj.data);
-              break;
+              break;*/
           }
 
           const childList = _getChildsApi(endpoints, list[i].name);
@@ -349,6 +382,11 @@ const _callApi = async (info, reportLog) => {
     headers: _setHttpHeaders(info.headers),
     method: 'get'
   };
+ 
+  if (options.url == "api/v2/dashboard/lists/manual"){
+    console.log(options);
+  }
+
   ret = await axios(options).catch(async error => {
     if (error.response) {
       // The request was made and the server responded with a status code
@@ -388,6 +426,7 @@ const _callApi = async (info, reportLog) => {
       throw error;
     }
   });
+
   return ret;
 };
 
@@ -403,7 +442,6 @@ const _setHttpHeaders = obj => {
 
 const _getChildsApi = (list, parentName) => {
   const filteredList = [];
-
   const childs = cpanel
     .filter(ep => ep.enable && ep.parent === parentName)
     .map(ep => ep.name);
@@ -669,6 +707,7 @@ const getMonitorDetails = async (id, reportLog) => {
   return ret;
 };
 const getVariableDetails = async (id, reportLog) => {
+  alert("getting synthetics using the api")
   let ret = null;
   let endpoint =
     'https://api.datadoghq.{{datadog_site}}/api/v1/synthetics/variables/{variable_id}';
