@@ -47,7 +47,7 @@ Next, to clone this repository and run the code locally against your New Relic d
 
 ```bash
 
-nr1 nerdpack:clone -r https://github.com/GlobalsoftWigilabs/nr1-cambio
+nr1 nerdpack:clone -r https://github.com/mauiwilliams272/nr1-cambio
 
 cd nr-cambio
 
@@ -57,12 +57,12 @@ This nerdlet has a configuration file located at:
 
 **nerdlets / cambio-nerdlet / services**
 
-Where should be placed a proxy address (configured to resolve the cors block) and an access link to the microsoft teams webhook for messages sent from the support form.
+Where should be placed a proxy address (configured to resolve the cors block) and an access link to the microsoft teams webhook for messages sent from the support form.  By default this is using a proxy service that New Relic hosts in it's own AWS instance
 
  e.g:
 ```
 {
-    "proxy":"https://long-meadow-1713.rsamanez.workers.dev/?",
+    "proxy":"https://x692s48gxl.execute-api.us-west-2.amazonaws.com/default/cambioAjaxProxy/?",
     "webhook_url_teams":"https://outlook.office.com/webhook/........"
 }
 ```
