@@ -151,7 +151,7 @@ export default class Setup extends React.PureComponent {
                   <Form className="form__setup" autoComplete="off">
                     <div className="setup__textsFields">
                       <div className="setup__textfield">
-                        <div className="setup__label fontNormal">
+                        <div className="setup__label fontNormal"> 
                           API key
                           <div>
                             <a
